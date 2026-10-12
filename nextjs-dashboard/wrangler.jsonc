@@ -34,7 +34,7 @@
 	],
 	"routes": [
 		{
-			"pattern": "gpuprice.freellm.org",
+			"pattern": "gpuprice.becloudready.com",
 			"custom_domain": true
 		}
 	],
@@ -60,7 +60,7 @@
 	 * https://developers.cloudflare.com/workers/configuration/secrets/
 	 */
 	"vars": {
-		"NEXT_PUBLIC_SITE_URL": "https://gpuprice.freellm.org",
-		"NEXT_PUBLIC_DATA_URL": "https://gpuprice.freellm.org/latest/all.json"
+		"NEXT_PUBLIC_SITE_URL": "https://gpuprice.becloudready.com",
+		"NEXT_PUBLIC_DATA_BASE_URL": "https://freellm.org"
 	}
 }

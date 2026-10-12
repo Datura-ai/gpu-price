@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
 
   description:
-    "Compare GPU rental prices in real-time across CoreWeave, RunPod, Lambda Labs, Nebius, Crusoe and more. Find the cheapest H100, A100, and L40S instances for AI training, ML inference, and GPU-intensive workloads. Updated nightly.",
+    "Compare GPU rental prices in real-time across AWS, Azure, GCP, RunPod, Lambda Labs, Nebius, Crusoe and more. Find the cheapest H100, A100, and L40S instances for AI training, ML inference, and GPU-intensive workloads. Updated nightly.",
 
   keywords: [
     // GPU models
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     "diffusion model GPU",
     "GPU for fine-tuning",
     // providers
-    "CoreWeave GPU pricing",
+    "AWS GPU pricing",
     "RunPod pricing",
     "Lambda Labs GPU",
     "Nebius cloud GPU",
@@ -84,14 +84,14 @@ export const metadata: Metadata = {
     siteName: "GPU Cloud Pricing",
     title: "GPU Cloud Pricing — Compare H100, A100 & L40S Across Neo Clouds",
     description:
-      "Real-time GPU rental pricing across CoreWeave, RunPod, Lambda Labs, Nebius, Crusoe and more. Find the best GPU prices for AI training, ML inference, and GPU workloads. Updated nightly.",
+      "Real-time GPU rental pricing across AWS, Azure, GCP, RunPod, Lambda Labs, Nebius, Crusoe and more. Find the best GPU prices for AI training, ML inference, and GPU workloads. Updated nightly.",
   },
 
   twitter: {
     card: "summary_large_image",
     title: "GPU Cloud Pricing — Compare GPU Rentals Across Neo Clouds",
     description:
-      "Real-time GPU pricing across CoreWeave, RunPod, Lambda Labs and more. Find the cheapest H100, A100 for your AI and ML workloads.",
+      "Real-time GPU pricing across AWS, RunPod, Lambda Labs and more. Find the cheapest H100, A100 for your AI and ML workloads.",
   },
 
   alternates: {

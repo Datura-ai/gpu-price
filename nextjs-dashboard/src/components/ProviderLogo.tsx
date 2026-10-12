@@ -2,7 +2,6 @@ import Image from "next/image";
 
 // Providers that have a logo file in /public/providers/
 const LOGO_FILES: Record<string, string> = {
-  coreweave:  "/providers/coreweave.png",
   runpod:     "/providers/runpod.png",
   lambda:     "/providers/lambda.png",
   lambdalabs: "/providers/lambda.png",

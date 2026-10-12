@@ -11,45 +11,38 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: auto
+      R2_BUCKET: ${{ secrets.R2_BUCKET }}
+      ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: pip
+          cache-dependency-path: scraper/requirements.txt
 
-      - name: Install dependencies
+      - run: pip install -r scraper/requirements.txt
+
+      - name: Fetch previous job files (fallback for failed sources)
+        run: aws s3 sync "s3://${R2_BUCKET}/latest/jobs" previous --endpoint-url "${ENDPOINT}" || true
+
+      - name: Collect prices
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Run scrapers
-        run: |
-          mkdir -p data
-          python3 run_all_scrapers.py
-          python3 merge_all_prices.py --in-dir data --out-json data/all.json
-
+          python -m scraper.run_all --out-dir data --raw-dir raw --previous-dir previous
+          python -m scraper.merge --data-dir data
 
       - name: Upload to Cloudflare R2 (S3 API)
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: auto
-          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
-          R2_BUCKET: ${{ secrets.R2_BUCKET }}
         run: |
           set -euo pipefail
-          ENDPOINT="https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
-
-          # Upload "latest" (overwrite each run)
-          aws s3 sync data "s3://${R2_BUCKET}/latest" \
-            --endpoint-url "${ENDPOINT}" \
-            --delete
-
-          # Optional: also upload a dated snapshot directory
           DATE="$(date -u +%Y-%m-%d)"
-          aws s3 sync data "s3://${R2_BUCKET}/history/${DATE}" \
-            --endpoint-url "${ENDPOINT}"
+          # "latest" is overwritten each run; the dated snapshot is kept for history charts
+          aws s3 sync data "s3://${R2_BUCKET}/latest" --endpoint-url "${ENDPOINT}" --delete
+          aws s3 sync data "s3://${R2_BUCKET}/history/${DATE}" --endpoint-url "${ENDPOINT}"
+          # Raw upstream responses and quarantined rows, for diagnosing failures
+          aws s3 sync raw "s3://${R2_BUCKET}/raw/${DATE}" --endpoint-url "${ENDPOINT}"

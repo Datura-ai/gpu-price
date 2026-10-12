@@ -21,6 +21,7 @@ export function normalizeRow(r: GPURaw): GPURow {
     clean(r.gpu_model) || clean(r.product) || clean(r.title) || clean(r.item);
 
   const priceRaw =
+    r.price_per_gpu_hour_usd ??
     r.price_per_hour_usd ??
     r.price_per_gpu_hour ??
     r.secure_price ??

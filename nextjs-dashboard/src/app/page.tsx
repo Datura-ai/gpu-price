@@ -1,7 +1,8 @@
 import Dashboard from "@/components/Dashboard";
+import { DATA_BASE_URL } from "@/lib/constants";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://freellm.org";
-const dataUrl = process.env.NEXT_PUBLIC_DATA_URL ?? "https://freellm.org/latest/all.json";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gpuprice.becloudready.com";
+const dataUrl = `${DATA_BASE_URL}/latest/all.json`;
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -25,7 +26,7 @@ const jsonLd = {
       name: "GPU Cloud Pricing Comparison Tool",
       url: siteUrl,
       description:
-        "A real-time comparison tool for GPU cloud rental pricing across CoreWeave, RunPod, Lambda Labs, Nebius, Crusoe, Denvr and other neo cloud providers.",
+        "A real-time comparison tool for GPU cloud rental pricing across AWS, Azure, GCP, Oracle, RunPod, Lambda Labs, Nebius, Crusoe and other neo cloud providers.",
       applicationCategory: "DeveloperApplication",
       operatingSystem: "Web",
       isAccessibleForFree: true,
@@ -53,7 +54,7 @@ const jsonLd = {
       "@id": `${siteUrl}/#dataset`,
       name: "GPU Cloud Pricing Dataset",
       description:
-        "Nightly-updated GPU rental pricing data across neo cloud providers including CoreWeave, RunPod, Lambda Labs, Nebius, Crusoe, and Denvr. Includes GPU model, VRAM, vCPU, RAM, storage, and price per hour.",
+        "Nightly-updated GPU rental pricing data across neo cloud providers including AWS, Azure, GCP, Oracle, RunPod, Lambda Labs, Nebius, and Crusoe. Includes GPU model, VRAM, vCPU, RAM, storage, and price per hour.",
       url: dataUrl,
       distribution: [
         {
@@ -69,7 +70,7 @@ const jsonLd = {
       ],
       keywords: [
         "GPU pricing", "H100", "A100", "L40S", "cloud computing",
-        "CoreWeave", "RunPod", "Lambda Labs", "Nebius", "Crusoe",
+        "AWS", "Azure", "RunPod", "Lambda Labs", "Nebius", "Crusoe",
         "AI training", "machine learning", "LLM", "inference",
       ],
       temporalCoverage: "2024/..",
@@ -89,7 +90,7 @@ const jsonLd = {
           name: "Which cloud provider has the cheapest H100 GPU?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "H100 pricing varies daily. Our dashboard aggregates real-time pricing from CoreWeave, RunPod, Lambda Labs, Nebius, Crusoe, and more so you can instantly compare the cheapest H100 rental per hour.",
+            text: "H100 pricing varies daily. Our dashboard aggregates real-time pricing from AWS, Azure, GCP, RunPod, Lambda Labs, Nebius, Crusoe, and more so you can instantly compare the cheapest H100 rental per hour.",
           },
         },
         {
@@ -113,7 +114,7 @@ const jsonLd = {
           name: "Can I download the GPU pricing data?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: `Yes. The full dataset is freely available as JSON at ${dataUrl} and as CSV. Historical daily snapshots are available at ${siteUrl}/history/YYYY-MM-DD/all.json.`,
+            text: `Yes. The full dataset is freely available as JSON at ${dataUrl} and as CSV. Historical daily snapshots are available at ${DATA_BASE_URL}/history/YYYY-MM-DD/all.json.`,
           },
         },
       ],

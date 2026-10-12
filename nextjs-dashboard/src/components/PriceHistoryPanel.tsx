@@ -17,7 +17,6 @@ const PROVIDER_STYLES: Record<
   string,
   { dot: string; text: string; bg: string; ring: string }
 > = {
-  coreweave:  { dot: "bg-violet-400",  text: "text-violet-700 dark:text-violet-300",  bg: "bg-violet-500/10",  ring: "ring-violet-500/20"  },
   runpod:     { dot: "bg-orange-400",  text: "text-orange-700 dark:text-orange-300",  bg: "bg-orange-500/10",  ring: "ring-orange-500/20"  },
   lambda:     { dot: "bg-blue-400",    text: "text-blue-700 dark:text-blue-300",      bg: "bg-blue-500/10",    ring: "ring-blue-500/20"    },
   lambdalabs: { dot: "bg-blue-400",    text: "text-blue-700 dark:text-blue-300",      bg: "bg-blue-500/10",    ring: "ring-blue-500/20"    },

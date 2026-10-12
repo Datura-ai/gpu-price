@@ -1,0 +1,19 @@
+name: Weekly source contract test
+
+# Runs every job against the live upstream sources and fails if any job returns
+# fewer rows than its minimum or raises. Nothing is published.
+on:
+  schedule:
+    - cron: "41 5 * * 1"
+  workflow_dispatch: {}
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r scraper/requirements.txt
+      - run: python -m scraper.run_all --out-dir data --raw-dir raw --strict

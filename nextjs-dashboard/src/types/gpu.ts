@@ -1,10 +1,12 @@
-// Raw shape from all.json — field names vary slightly across scrapers
+// Raw shape from all.json. Current rows use price_per_gpu_hour_usd; the other price
+// fields exist only so historical snapshots from the old scrapers still render.
 export interface GPURaw {
   provider: string;
   product?: string;
   gpu_model?: string;
   title?: string;
   item?: string;
+  price_per_gpu_hour_usd?: number | null;
   price_per_hour_usd?: number | null;
   price_per_gpu_hour?: number | string | null;
   secure_price?: number | string | null;

@@ -2,9 +2,9 @@
 
 **Compare GPU rental prices across neo cloud providers — updated nightly.**
 
-A real-time dashboard for developers, AI engineers, and ML researchers who need to find the cheapest H100, A100, L40S, or B200 GPU instances for training, fine-tuning, or inference workloads. Browse pricing from CoreWeave, RunPod, Lambda Labs, Nebius, Crusoe, Denvr and more in one place — no vendor lock-in, no sign-up required.
+A real-time dashboard for developers, AI engineers, and ML researchers who need to find the cheapest H100, A100, L40S, or B200 GPU instances for training, fine-tuning, or inference workloads. Browse pricing from AWS, Azure, GCP, Oracle, RunPod, Lambda Labs, Nebius, Crusoe and more in one place — no vendor lock-in, no sign-up required.
 
-**Live:** [freellm.org](https://gpuprice.freellm.org)
+**Live:** [gpuprice.becloudready.com](https://gpuprice.becloudready.com)
 
 ---
 
@@ -16,30 +16,46 @@ A real-time dashboard for developers, AI engineers, and ML researchers who need 
 - **Multi-GPU comparison** 
 - **Filters** 
 
-### Supported providers
+### Data sources
 
-| Provider | Status |
+Prices come from machine-readable sources, not HTML scraping. Each source is an independent job: if one fails, its last good data is kept and flagged `stale` in `meta.json`.
+
+| Source | Providers |
 |---|---|
-| CoreWeave | ✅ |
-| RunPod | ✅ |
-| Lambda Labs | ✅ |
-| Nebius | ✅ |
-| Crusoe | ✅ |
-| Denvr | ✅ |
+| [dstack gpuhunt catalog](https://github.com/dstackai/gpuhunt) | AWS, Azure, GCP, Oracle, Lambda, RunPod, Nebius, Verda, CloudRift |
+| Shadeform marketplace API | Crusoe, Denvr, Massed Compute, Paperspace, Hyperstack, Scaleway, Latitude and others |
+| Akamai/Linode API | Linode |
+| Vultr API | Vultr |
 
+All prices are on-demand USD per GPU-hour (spot, reserved and fractional-GPU offers are excluded). Rows outside per-model sanity bounds are quarantined, not published.
 
 ---
 
+## Repository layout
+
+```
+scraper/             Python scrapers + merge step (run nightly by GitHub Actions)
+  sources/           one module per upstream source
+  schema.py          normalized Offer schema, GPU naming, sanity bounds
+  run_all.py         runs each job independently, with stale fallback
+  merge.py           merges job files into all.json, all.csv, meta.json
+tests/               pytest suite for the scraper
+nextjs-dashboard/    Next.js frontend, deployed to Cloudflare Workers via OpenNext
+.github/workflows/   nightly scrape and upload to R2
+```
+
 ## Local development
 
-### Prerequisites
+### Scrapers (Python 3.11+)
 
-- Python 3.11+
-- Node.js 18+
-- npm
+```bash
+pip install -r scraper/requirements.txt
+python -m scraper.run_all --out-dir data --raw-dir raw
+python -m scraper.merge --data-dir data
+pip install -r scraper/requirements-dev.txt && python -m pytest tests
+```
 
-
-### . Run the dashboard
+### Dashboard (Node.js 18+)
 
 ```bash
 cd nextjs-dashboard
@@ -48,7 +64,6 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
-
 
 ---
 
