@@ -46,8 +46,8 @@ export default function Dashboard() {
     setError(null);
     try {
       const [dataRes, metaRes] = await Promise.allSettled([
-        fetch(DATA_URL),
-        fetch(META_URL),
+        fetch(DATA_URL, { cache: "no-cache" }),
+        fetch(META_URL, { cache: "no-cache" }),
       ]);
 
       if (dataRes.status !== "fulfilled" || !dataRes.value.ok) {
