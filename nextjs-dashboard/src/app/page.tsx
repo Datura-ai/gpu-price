@@ -1,5 +1,8 @@
 import Dashboard from "@/components/Dashboard";
 import { DATA_BASE_URL } from "@/lib/constants";
+import Link from "next/link";
+import { CompareLinks, GpuIndex, ProviderLinks } from "@/components/Hub";
+import { loadDataset, type Offer } from "@/lib/pricing";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gpuprice.becloudready.com";
 const dataUrl = `${DATA_BASE_URL}/latest/all.json`;
@@ -82,47 +85,18 @@ const jsonLd = {
         url: siteUrl,
       },
     },
-    {
-      "@type": "FAQPage",
-      mainEntity: [
-        {
-          "@type": "Question",
-          name: "Which cloud provider has the cheapest H100 GPU?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "H100 pricing varies daily. Our dashboard aggregates real-time pricing from AWS, Azure, GCP, RunPod, Lambda Labs, Nebius, Crusoe, and more so you can instantly compare the cheapest H100 rental per hour.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "How often is GPU pricing data updated?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Pricing data is scraped nightly from each provider's public pricing pages and uploaded to our dataset. Historical snapshots are available per day.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "What GPU types are available for comparison?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "We track H100, H200, A100, A10, L40S, B200, RTX 4090, and more across neo cloud providers. Use the GPU Type filter to narrow down specific models.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "Can I download the GPU pricing data?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: `Yes. The full dataset is freely available as JSON at ${dataUrl} and as CSV. Historical daily snapshots are available at ${DATA_BASE_URL}/history/YYYY-MM-DD/all.json.`,
-          },
-        },
-      ],
-    },
   ],
 };
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  let offers: Offer[] = [];
+  try {
+    offers = (await loadDataset()).offers;
+  } catch {
+    // dashboard still works client-side; the crawlable section is just omitted
+  }
   return (
     <>
       <script
@@ -130,6 +104,22 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Dashboard />
+      {offers.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-10 text-zinc-300 sm:px-6 lg:px-8">
+          <h2 className="text-xl font-semibold text-zinc-100">Cloud GPU prices by model</h2>
+          <p className="mb-4 mt-2 text-sm text-zinc-400">
+            Lowest and median on-demand price per GPU-hour across {new Set(offers.map((o) => o.provider)).size} providers.
+          </p>
+          <GpuIndex offers={offers} />
+          <h2 className="mb-3 mt-10 text-xl font-semibold text-zinc-100">Pricing by provider</h2>
+          <ProviderLinks offers={offers} />
+          <h2 className="mb-3 mt-10 text-xl font-semibold text-zinc-100">Compare GPUs</h2>
+          <CompareLinks offers={offers} />
+          <p className="mt-8 text-xs text-zinc-500">
+            <Link href="/gpu" className="hover:text-zinc-300">All GPUs</Link>
+          </p>
+        </section>
+      )}
     </>
   );
 }
