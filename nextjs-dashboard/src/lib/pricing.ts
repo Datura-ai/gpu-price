@@ -18,6 +18,7 @@ export interface Offer {
   instance: string | null;
   instancePrice: number | null;
   url: string | null;
+  availability: "in_stock" | "out_of_stock" | null;
 }
 
 export interface Dataset {
@@ -116,6 +117,7 @@ export async function loadDataset(): Promise<Dataset> {
       instance: r.instance_type ?? null,
       instancePrice: r.instance_price_usd_per_hour ?? null,
       url: n.source || null,
+      availability: n.availability,
     });
   }
 

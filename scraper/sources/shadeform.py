@@ -2,6 +2,9 @@
 
 `hourly_price` is in cents for the whole instance. Providers already collected from a
 primary source are skipped so each provider has exactly one source.
+
+Out-of-stock offers are kept (availability="out_of_stock") so every listed provider shows
+up. An in-stock offer is priced from its in-stock regions only, so the price is rentable.
 """
 
 import json
@@ -27,7 +30,9 @@ def parse(payload: dict) -> list[Offer]:
         vram = cfg.get("vram_per_gpu_in_gb")
         model = canonical_model(cfg["gpu_type"], vram)
         price = price_cents / 100
-        regions = {a["region"]: round(price / count, 4) for a in t.get("availability", []) if a.get("available")}
+        slots = t.get("availability") or []
+        in_stock = [a["region"] for a in slots if a.get("available")]
+        regions = {r: round(price / count, 4) for r in (in_stock or [a["region"] for a in slots])}
         if not regions:
             continue
         storage_gb = cfg.get("storage_in_gb")
@@ -46,11 +51,12 @@ def parse(payload: dict) -> list[Offer]:
             local_storage_tb=round(storage_gb / 1000, 3) if storage_gb else None,
             deploy_url="https://platform.shadeform.ai/",
             source="shadeform",
+            availability="in_stock" if in_stock else "out_of_stock",
         ))
     return drop_fractional(offers)
 
 
 def fetch(raw) -> list[Offer]:
-    resp = http.get(URL, params={"available": "true"})
+    resp = http.get(URL)
     raw("shadeform.json", resp.content)
     return parse(resp.json())

@@ -27,6 +27,7 @@ export interface GPURaw {
   location?: string | null;
   deploy_url?: string;
   link?: string;
+  availability?: string | null;
 }
 
 // Normalised shape used throughout the UI
@@ -42,6 +43,7 @@ export interface GPURow {
   storage: number | null;
   region: string | null;
   source: string;
+  availability: "in_stock" | "out_of_stock" | null;
 }
 
 export interface Meta {

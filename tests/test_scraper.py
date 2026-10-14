@@ -57,6 +57,20 @@ def test_shadeform_cents_and_covered_provider_skipped():
     assert [(o.provider, o.price_per_gpu_hour_usd) for o in offers] == [("crusoe", 2.0)]
 
 
+def test_shadeform_keeps_out_of_stock_and_flags_availability():
+    def t(cloud, slots):
+        return {"cloud": cloud, "shade_instance_type": "X", "hourly_price": 1600, "configuration": {
+            "num_gpus": 8, "gpu_type": "H100", "vram_per_gpu_in_gb": 80, "vcpus": 8, "memory_in_gb": 8, "storage_in_gb": 1000},
+            "availability": [{"region": r, "available": a} for r, a in slots]}
+    offers = shadeform.parse({"instance_types": [
+        t("crusoe", [("us", True), ("eu", False)]),
+        t("voltagepark", [("us", False)]),
+    ]})
+    by = {o.provider: o for o in offers}
+    assert by["crusoe"].availability == "in_stock" and set(by["crusoe"].regions) == {"us"}
+    assert by["voltagepark"].availability == "out_of_stock" and by["voltagepark"].price_per_gpu_hour_usd == 2.0
+
+
 def test_linode_and_vultr():
     lin = linode.parse({"data": [{"id": "g", "label": "RTX4000 Ada x2 Small", "class": "gpu", "gpus": 2,
                                   "price": {"hourly": 1.0}, "vcpus": 8, "memory": 32768, "disk": 1048576}]})

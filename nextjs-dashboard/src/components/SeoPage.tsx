@@ -66,6 +66,7 @@ export function OfferTable({
             <th className="px-3 py-2 text-right">vCPU</th>
             <th className="px-3 py-2 text-right">RAM (GB)</th>
             <th className="px-3 py-2">Region</th>
+            <th className="px-3 py-2">Availability</th>
             <th className="px-3 py-2 text-right">$/GPU-hr</th>
           </tr>
         </thead>
@@ -91,6 +92,9 @@ export function OfferTable({
               <td className="px-3 py-2 text-right tabular-nums">{o.vcpu ?? "–"}</td>
               <td className="px-3 py-2 text-right tabular-nums">{o.ram ?? "–"}</td>
               <td className="px-3 py-2">{o.region ?? "–"}</td>
+              <td className="px-3 py-2 text-zinc-400">
+                {o.availability === "in_stock" ? "In stock" : o.availability === "out_of_stock" ? "Out of stock" : "–"}
+              </td>
               <td className="px-3 py-2 text-right font-medium tabular-nums text-zinc-100">{usd(o.price)}</td>
             </tr>
           ))}

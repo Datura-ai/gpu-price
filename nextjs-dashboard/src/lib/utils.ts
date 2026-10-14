@@ -48,6 +48,8 @@ export function normalizeRow(r: GPURaw): GPURow {
     storage: r.local_storage_tb ?? null,
     region: clean(r.region) || clean(r.location) || null,
     source: clean(r.deploy_url) || clean(r.link),
+    availability:
+      r.availability === "in_stock" || r.availability === "out_of_stock" ? r.availability : null,
   };
 }
 

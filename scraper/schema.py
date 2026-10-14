@@ -59,6 +59,8 @@ class Offer:
     local_storage_tb: Optional[float] = None
     deploy_url: Optional[str] = None
     source: str = ""
+    # "in_stock" | "out_of_stock" | None (unknown). Only some sources publish stock.
+    availability: Optional[str] = None
     currency: str = "USD"
     pricing: str = "on_demand"
 
@@ -122,5 +124,7 @@ def collapse_regions(offers: list[Offer]) -> list[Offer]:
                 if reg:
                     regions[reg] = min(p, regions.get(reg, p))
         best.regions = dict(sorted(regions.items()))
+        states = {r.availability for r in rows}
+        best.availability = "in_stock" if "in_stock" in states else "out_of_stock" if "out_of_stock" in states else None
         out.append(best)
     return out

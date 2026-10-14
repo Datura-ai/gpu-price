@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const d = await load(slug);
   if (!d) return {};
   const title = `${d.family} GPU Cloud Pricing: From ${usd(d.stats.min)}/hr Across ${d.stats.providers} Providers`;
-  const description = `Compare ${d.family} rental prices per GPU-hour across ${d.stats.providers} cloud providers. Cheapest right now: ${usd(d.stats.min)}/hr on ${providerName(d.stats.cheapest.provider)}. Median ${usd(d.stats.median)}/hr. Updated nightly.`;
+  const description = `Compare ${d.family} rental prices per GPU-hour across ${d.stats.providers} cloud providers. Lowest listed price: ${usd(d.stats.min)}/hr on ${providerName(d.stats.cheapest.provider)}. Median ${usd(d.stats.median)}/hr. Updated nightly.`;
   return {
     title: { absolute: title },
     description,
@@ -66,11 +66,12 @@ export default async function GpuPage({ params }: { params: Params }) {
         {family}
         {arch ? ` (${arch})` : ""} rents from <strong className="text-zinc-100">{usd(stats.min)}</strong> to{" "}
         {usd(stats.max)} per GPU-hour across {stats.count} listings from {stats.providers} providers.
-        The median is {usd(stats.median)}/hr. The lowest price today is on{" "}
+        The median is {usd(stats.median)}/hr. The lowest listed price is on{" "}
         <Link className="text-indigo-400 hover:underline" href={`/provider/${slugify(stats.cheapest.provider)}`}>
           {providerName(stats.cheapest.provider)}
         </Link>
-        {stats.cheapest.region ? ` (${stats.cheapest.region})` : ""}.
+        {stats.cheapest.region ? ` (${stats.cheapest.region})` : ""}
+        {stats.cheapest.availability === "out_of_stock" ? ", which shows no stock right now" : ""}.
         {variants.length > 1 ? ` Variants tracked: ${variants.join(", ")}.` : ""}
         {vrams.length ? ` VRAM options: ${vrams.map((v) => `${v} GB`).join(", ")}.` : ""}
       </p>
@@ -95,8 +96,10 @@ export default async function GpuPage({ params }: { params: Params }) {
           <dt className="font-medium text-zinc-100">Which provider has the cheapest {family}?</dt>
           <dd className="mt-1 text-zinc-400">
             {providerName(stats.cheapest.provider)} at {usd(stats.min)}/GPU-hr as of{" "}
-            {ds.generatedAt ? ds.generatedAt.slice(0, 10) : "the last refresh"}. The ranking changes, so
-            check the table above.
+            {ds.generatedAt ? ds.generatedAt.slice(0, 10) : "the last refresh"}
+            {stats.cheapest.availability === "out_of_stock" ? ", although it shows no stock right now" : ""}.
+            This is the lowest listed price, not a guarantee of capacity. The ranking changes, so check
+            the table above.
           </dd>
         </div>
         <div>

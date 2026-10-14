@@ -23,6 +23,7 @@ const COLS: Col[] = [
   { key: "region",    label: "Region"     },
   { key: "vcpu",      label: "vCPU",       right: true },
   { key: "ram",       label: "RAM (GB)",   right: true },
+  { key: "availability", label: "Availability" },
 ];
 
 // ─── Pagination helpers ────────────────────────────────────────────────────────
@@ -237,9 +238,6 @@ export default function DataTable({
                   )}
                 </th>
               ))}
-              <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 border-l border-zinc-200 dark:border-zinc-800">
-                Source
-              </th>
             </tr>
           </thead>
 
@@ -308,20 +306,18 @@ export default function DataTable({
                     </td>
                   ))}
 
-                  {/* Source */}
+                  {/* Availability (only some sources publish stock) */}
                   <td className="px-4 py-3 align-middle">
-                    {row.source ? (
-                      <a
-                        href={row.source}
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-xs text-indigo-500/70 dark:text-indigo-400/70 transition-colors hover:text-indigo-600 dark:hover:text-indigo-300"
-                      >
-                        ↗ link
-                      </a>
+                    {row.availability === "in_stock" ? (
+                      <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-600 dark:text-emerald-400 ring-1 ring-inset ring-emerald-500/20">
+                        In stock
+                      </span>
+                    ) : row.availability === "out_of_stock" ? (
+                      <span className="rounded-full bg-zinc-500/10 px-2 py-0.5 text-xs font-medium text-zinc-500 dark:text-zinc-400 ring-1 ring-inset ring-zinc-500/20">
+                        Out of stock
+                      </span>
                     ) : (
-                      <span className="text-xs text-zinc-300 dark:text-zinc-700">—</span>
+                      <span className="text-xs text-zinc-300 dark:text-zinc-700" title="This provider does not publish stock">—</span>
                     )}
                   </td>
                 </tr>
